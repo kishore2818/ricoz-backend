@@ -14,10 +14,38 @@ app.use(helmet({
   crossOriginResourcePolicy: false
 }));
 
-// CORS
+// CORS - Allow Vercel, localhost, and configured origins
 app.use(cors({
-  origin: config.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // If CORS_ORIGIN is wildcard or unset in prod, allow all
+    if (config.CORS_ORIGIN === '*' || !config.CORS_ORIGIN) {
+      return callback(null, true);
+    }
+
+    // Allow any Vercel preview or production deployment, and localhost
+    if (
+      origin.endsWith('.vercel.app') ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('https://localhost:') ||
+      origin === config.CORS_ORIGIN
+    ) {
+      return callback(null, true);
+    }
+
+    // Fallback: check comma-separated origins
+    const allowed = config.CORS_ORIGIN.split(',').map(o => o.trim());
+    if (allowed.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(null, true); // Permissive in deployment to avoid blocking LP users
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
 // Request Parsers
