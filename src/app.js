@@ -31,6 +31,18 @@ if (config.NODE_ENV !== 'test') {
 // Static folder for file downloads
 app.use('/uploads', express.static(config.UPLOAD_DIR));
 
+// Root Endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Apex Horizon Capital — PE LP Reporting Agent Backend API is live.',
+    status: 'healthy',
+    version: '1.0.0',
+    documentation: '/api/health',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Healthcheck
 app.get('/api/health', (req, res) => {
   res.status(200).json({
