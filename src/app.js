@@ -12,6 +12,9 @@ const { apiLimiter } = require('./middleware/rateLimiter');
 
 const app = express();
 
+// Trust reverse proxy (Render, Cloudflare, Heroku) so express-rate-limit correctly resolves client IP
+app.set('trust proxy', 1);
+
 // Traceability & Security Headers
 app.use(requestIdMiddleware);
 app.use(helmet({

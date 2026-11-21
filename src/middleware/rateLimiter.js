@@ -22,6 +22,7 @@ const apiLimiter = rateLimit({
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   handler: rateLimitHandler('Too many requests to the PE LP Reporting API. Please try again later.')
 });
 
@@ -35,6 +36,7 @@ const authLimiter = rateLimit({
   max: 25,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   handler: rateLimitHandler('Too many authentication attempts. For security reasons, please wait 15 minutes before trying again.')
 });
 
@@ -48,6 +50,7 @@ const uploadLimiter = rateLimit({
   max: 40,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   handler: rateLimitHandler('Upload limit exceeded. Please wait a few minutes before submitting more portfolio filings.')
 });
 
