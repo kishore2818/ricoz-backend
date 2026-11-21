@@ -4,10 +4,11 @@ const documentController = require('../controllers/documentController');
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
 const upload = require('../middleware/uploadMiddleware');
+const { uploadLimiter } = require('../middleware/rateLimiter');
 
 router.use(protect);
 
-router.post('/upload', authorize('Admin', 'Analyst'), upload.single('file'), documentController.uploadDocument);
+router.post('/upload', authorize('Admin', 'Analyst'), uploadLimiter, upload.single('file'), documentController.uploadDocument);
 router.get('/', documentController.getDocuments);
 router.get('/:id', documentController.getDocumentById);
 router.post('/:id/process', authorize('Admin', 'Analyst'), documentController.processDocument);
